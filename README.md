@@ -201,7 +201,7 @@ title: Dynamic Electicity Prices
 Current day
 ```yaml
 type: custom:apexcharts-card
-graph_span: 25h
+graph_span: 24h
 experimental:
   color_threshold: true
 header:
