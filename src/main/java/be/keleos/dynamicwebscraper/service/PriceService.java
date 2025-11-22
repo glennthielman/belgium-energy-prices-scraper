@@ -33,8 +33,8 @@ public class PriceService {
 
     public Calculations getCalculations() {
         return new Calculations()
-                .setAveragePriceKwH(getAvaragePriceKwh())
-                .setAveragePriceMwH(getAvaragePriceMwh());
+                .setAveragePriceKwH(getAveragePriceKwh())
+                .setAveragePriceMwH(getAveragePriceMwh());
     }
 
     public Price getCurrentPrice(LocalDateTime dateTime) {
@@ -57,14 +57,14 @@ public class PriceService {
                 .orElse(null);
     }
 
-    public BigDecimal getAvaragePriceKwh() {
+    public BigDecimal getAveragePriceKwh() {
         var sum = getPrices().getPrices().stream()
                 .map(Price::getPriceKwH)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return sum.divide(BigDecimal.valueOf(getPrices().getPrices().size()));
     }
 
-    public BigDecimal getAvaragePriceMwh() {
+    public BigDecimal getAveragePriceMwh() {
         var sum = getPrices().getPrices().stream()
                 .map(Price::getPriceMwH)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

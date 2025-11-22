@@ -48,13 +48,13 @@ public class LuminusPriceAdaptor {
         } catch (IOException e) {
             log.error("Cannot get LuminusPrices from web", e);
         }
-        return null;
+        return new PriceResource();
     }
 
     @CacheEvict(value = "luminusPricesCache", allEntries = true)
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
     public void evictCache() {
-        log.debug("Evicting luminusPricesCache from web");
+        log.debug("Evicting luminusPricesCache");
     }
 
     private Document getDocument() throws IOException {
@@ -86,13 +86,13 @@ public class LuminusPriceAdaptor {
         var time = td.getFirst().text()
                 .replaceAll("\\.", ":")
                 .substring(0, 5);
+        var startDateTime = LocalDateTime.of(date, LocalTime.parse(time));
 
         var price = td.get(index).text();
         price = price.equalsIgnoreCase("tbd") ?
                 "0" :
                 price.replaceAll("€", "");
 
-        var startDateTime = LocalDateTime.of(date, LocalTime.parse(time));
         return new Price()
                 .setStartTime(startDateTime)
                 .setEndTime(startDateTime.plusHours(1))
