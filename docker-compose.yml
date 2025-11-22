@@ -1,0 +1,8 @@
+version: "2.1"
+services:
+  deluge:
+    image: dynamic-prices:latest
+    container_name: dynamic-prices
+    ports:
+      - 85:8080
+    restart: unless-stopped
