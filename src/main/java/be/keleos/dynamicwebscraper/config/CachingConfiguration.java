@@ -12,7 +12,9 @@ public class CachingConfiguration {
 
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("luminusPricesCache");
+        return new ConcurrentMapCacheManager(
+"luminusPricesCache",
+             "OctaPlusPricesCache");
     }
 
 }

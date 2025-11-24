@@ -1,6 +1,7 @@
 package be.keleos.dynamicwebscraper.service;
 
-import be.keleos.dynamicwebscraper.adaptor.LuminusPriceAdaptor;
+import be.keleos.dynamicwebscraper.adaptor.luminus.LuminusPriceAdaptor;
+import be.keleos.dynamicwebscraper.adaptor.octaplus.OctaPlusAdaptor;
 import be.keleos.dynamicwebscraper.model.Calculations;
 import be.keleos.dynamicwebscraper.model.Highlight;
 import be.keleos.dynamicwebscraper.model.Price;
@@ -9,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 
@@ -18,56 +18,63 @@ import java.util.Comparator;
 public class PriceService {
 
     private final LuminusPriceAdaptor luminusPriceAdaptor;
+    private final OctaPlusAdaptor octaPlusAdaptor;
 
-    public PriceResource getPrices() {
-        return luminusPriceAdaptor.getPrices();
+    public PriceResource getPrices(PriceProvider provider) {
+        return switch (provider) {
+            case LUMINUS -> luminusPriceAdaptor.getPrices();
+            case OCTA_PLUS -> octaPlusAdaptor.getPrices();
+        };
     }
 
-    public Highlight getHighlight(LocalDateTime dateTime) {
+    public Highlight getHighlight(PriceProvider provider, LocalDateTime dateTime) {
         return new Highlight()
-                .setCurrentPrice(getCurrentPrice(dateTime))
-                .setMinPrice(getMinPrice())
-                .setMaxPrice(getMaxPrice())
-                .setCalculations(getCalculations());
+                .setCurrentPrice(getCurrentPrice(provider, dateTime))
+                .setMinPrice(getMinPrice(provider))
+                .setMaxPrice(getMaxPrice(provider))
+                .setCalculations(getCalculations(provider));
+
     }
 
-    public Calculations getCalculations() {
+    public Calculations getCalculations(PriceProvider provider) {
         return new Calculations()
-                .setAveragePriceKwH(getAveragePriceKwh())
-                .setAveragePriceMwH(getAveragePriceMwh());
+                .setAveragePriceKwH(getAvaragePriceKwh(provider))
+                .setAveragePriceMwH(getAvaragePriceMwh(provider));
     }
 
-    public Price getCurrentPrice(LocalDateTime dateTime) {
+    public Price getCurrentPrice(PriceProvider provider, LocalDateTime dateTime) {
         return dateTime == null ? null :
-                getPrices().getPrices().stream()
+                getPrices(provider).getPrices().stream()
                 .filter(price -> (dateTime.isAfter(price.getStartTime()) && dateTime.isBefore(price.getEndTime()) || dateTime.isEqual(price.getStartTime())))
                 .findFirst()
                 .orElse(null);
     }
 
-    public Price getMinPrice() {
-        return getPrices().getPrices().stream()
+    public Price getMinPrice(PriceProvider provider) {
+        return getPrices(provider).getPrices().stream()
                 .min(Comparator.comparing(Price::getPriceMwH))
                 .orElse(null);
     }
 
-    public Price getMaxPrice() {
-        return getPrices().getPrices().stream()
+    public Price getMaxPrice(PriceProvider provider) {
+        return getPrices(provider).getPrices().stream()
                 .max(Comparator.comparing(Price::getPriceMwH))
                 .orElse(null);
     }
 
-    public BigDecimal getAveragePriceKwh() {
-        var sum = getPrices().getPrices().stream()
+    public BigDecimal getAvaragePriceKwh(PriceProvider provider) {
+        var prices = getPrices(provider);
+        var sum = prices.getPrices().stream()
                 .map(Price::getPriceKwH)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sum.divide(BigDecimal.valueOf(getPrices().getPrices().size()), RoundingMode.HALF_DOWN);
+        return sum.divide(BigDecimal.valueOf(prices.getPrices().size()));
     }
 
-    public BigDecimal getAveragePriceMwh() {
-        var sum = getPrices().getPrices().stream()
+    public BigDecimal getAvaragePriceMwh(PriceProvider provider) {
+        var prices = getPrices(provider);
+        var sum = prices.getPrices().stream()
                 .map(Price::getPriceMwH)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sum.divide(BigDecimal.valueOf(getPrices().getPrices().size()), RoundingMode.HALF_DOWN);
+        return sum.divide(BigDecimal.valueOf(prices.getPrices().size()));
     }
 }

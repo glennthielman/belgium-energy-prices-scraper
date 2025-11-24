@@ -1,4 +1,4 @@
-package be.keleos.dynamicwebscraper.adaptor;
+package be.keleos.dynamicwebscraper.adaptor.luminus;
 
 import be.keleos.dynamicwebscraper.model.Price;
 import be.keleos.dynamicwebscraper.model.PriceResource;
@@ -39,8 +39,8 @@ public class LuminusPriceAdaptor {
             var date = getDate(doc, false);
             var dateAhead = getDate(doc, true);
 
-            var pricesDayOne = getPrices(doc, date, false);
-            var pricesDayTwo = getPrices(doc, dateAhead, true);
+            var pricesDayOne = mapPrices(doc, date, false);
+            var pricesDayTwo = mapPrices(doc, dateAhead, true);
 
             return new PriceResource()
                     .setPrices(pricesDayOne)
@@ -48,13 +48,13 @@ public class LuminusPriceAdaptor {
         } catch (IOException e) {
             log.error("Cannot get LuminusPrices from web", e);
         }
-        return new PriceResource();
+        return null;
     }
 
     @CacheEvict(value = "luminusPricesCache", allEntries = true)
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
     public void evictCache() {
-        log.debug("Evicting luminusPricesCache");
+        log.debug("Evicting luminusPricesCache from web");
     }
 
     private Document getDocument() throws IOException {
@@ -72,7 +72,7 @@ public class LuminusPriceAdaptor {
         return LocalDate.parse(date1, DateTimeFormatter.ofPattern("dd/MM/’yy"));
     }
 
-    private List<Price> getPrices(Document doc, LocalDate date, boolean dayAhead) throws IOException {
+    private List<Price> mapPrices(Document doc, LocalDate date, boolean dayAhead) throws IOException {
         var elements = doc.select("tbody tr");
         return elements.stream()
                 .map(element -> mapElementToPrice(element, date, dayAhead))
@@ -86,13 +86,13 @@ public class LuminusPriceAdaptor {
         var time = td.getFirst().text()
                 .replaceAll("\\.", ":")
                 .substring(0, 5);
-        var startDateTime = LocalDateTime.of(date, LocalTime.parse(time));
 
         var price = td.get(index).text();
         price = price.equalsIgnoreCase("tbd") ?
                 "0" :
                 price.replaceAll("€", "");
 
+        var startDateTime = LocalDateTime.of(date, LocalTime.parse(time));
         return new Price()
                 .setStartTime(startDateTime)
                 .setEndTime(startDateTime.plusHours(1))
