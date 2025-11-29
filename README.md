@@ -122,7 +122,7 @@ The container does caching for fetching the data of the providers, this is to no
 
 ### Installation
 
-1. Clone the repo
+1. Download the recent release (DockerFile, DockerCompose and jar file)
 2. Do a docker build
    ```sh
    docker build -t dynamic-prices:latest .
