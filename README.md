@@ -15,11 +15,16 @@
       <a href="#about-the-project">About The Project</a>
     </li>
     <li>
+      <a href="#available-endpoints">Available endpoints</a>
+    </li>
+    <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
+    <li><a href="#homeassistant">HomeAssistant</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -29,12 +34,19 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project will get the hourly energy prices in Belgium of the current day and day a head (after 14:00), based of the [Luminus MDM dashboard](https://my.luminusbusiness.be/market-info/nl/dynamic-prices/).  
-The goal is to scrape this dashboard into json format that is workable for home automation systems like HomeAssistant.
+This project will get the hourly energy prices in Belgium of the current day and day a head (after 14:00), based of the following data providers:
+* [Luminus](https://my.luminusbusiness.be/market-info/nl/dynamic-prices/).  
+* [OCTA+](https://www.octaplus.be/dynamisch-stroomtarief-uurprijzen)
+* [Eneco](https://eneco.be/nl/actuele-prijzen/)
+
+The goal is to scrape one of these data endpoints into structured json format that is workable for home automation systems like HomeAssistant.
 
 ### Available endpoints
 
-* **/prices**  
+first you will need to select a data provider using the following luminus, octaplus, eneco.
+you will need to replace that in url, for example of you want the eneco prices its "eneco/prices"
+
+* **<< dataprovider >>/prices**  
 Will give an hourly list of all prices, example:
 ```json
 "prices": [
@@ -67,9 +79,8 @@ Will give an hourly list of all prices, example:
 ]
 ```
 
-* **/highlights?datetime=<< Current timestamp >>**  
-Will give a short summary of the day, use the current timestamp of your domotica as param meter for "dateTime". The webservice will give the price that matches the current time.  
-example: /highlights?datetime=2025-11-22T08:39
+* **<< dataprovider >>/highlights?datetime=<< Current timestamp >>**  
+Will give a short summary of the day. In order to get the current price, you will need to provide a timestamp for example: /highlights?datetime=2025-11-22T08:39
 ```json
 {
   "calculations": {
@@ -101,7 +112,7 @@ example: /highlights?datetime=2025-11-22T08:39
 ## Getting Started
 
 This project requires docker to run.  
-The container does caching for fetching the data of the dashboard, this to not bombard the Luminus dashboard with requests.  
+The container does caching for fetching the data of the providers, this is to not bombard data providers with requests.  
 **!!! DO NOT CHANGE THE CACHE TIMER !!!** Be mindful that services don't come for free!
 
 ### Prerequisites:
@@ -127,7 +138,7 @@ The container does caching for fetching the data of the dashboard, this to not b
 
 ### config
 
-You will need to add the following rest config
+You will need to add the following rest config and for the resource replace the "<<<<<< URL >>>>>" with your server url. 
 ```yaml
 rest:
   - resource: <<<<<<URL>>>>>/prices
@@ -384,7 +395,11 @@ apex_config:
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] TODO
+- [x] Luminus integration
+- [x] Octa+ integration
+- [x] Eneco integration
+- [ ] Clean up code
+- [ ] investigate patterns to streamline integrations
 
 <!-- LICENSE -->
 ## License
