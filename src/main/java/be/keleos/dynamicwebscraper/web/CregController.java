@@ -27,10 +27,11 @@ public class CregController {
 
     @GetMapping("prices/current")
     public FixedQuarterlyPrice getCurrentQuarterlyPrice() throws IOException {
+        var localDate = LocalDate.now();
         return cregFixedPriceAdapter.getFixedQuarterlyPrices()
                 .getPrices().stream()
-                .filter(fixedQuarterlyPrice -> fixedQuarterlyPrice.getYear() == LocalDate.now().getYear())
-                .filter(fixedQuarterlyPrice -> fixedQuarterlyPrice.getQuarter() == LocalDate.now().get(QUARTER_OF_YEAR))
+                .filter(fixedQuarterlyPrice -> fixedQuarterlyPrice.getYear() == localDate.getYear())
+                .filter(fixedQuarterlyPrice -> fixedQuarterlyPrice.getQuarter() == localDate.get(QUARTER_OF_YEAR))
                 .findFirst()
                 .orElse(null);
     }

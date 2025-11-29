@@ -15,9 +15,9 @@ public class FixedPrice {
     private BigDecimal nakedPrice;
 
     public FixedPrice setPrice(BigDecimal price) {
-        this.price = price;
-        this.fiftyFifty = price.divide(BigDecimal.TWO, RoundingMode.DOWN);
-        this.nakedPrice = price.subtract(new BigDecimal(17));
+        this.price = price.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
+        this.fiftyFifty = this.price.divide(BigDecimal.TWO, RoundingMode.HALF_UP);
+        this.nakedPrice = this.price.subtract(new BigDecimal("0.17"));
         return this;
     }
 
