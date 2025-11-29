@@ -10,7 +10,7 @@
     </parent>
     <groupId>be.keleos</groupId>
     <artifactId>dynamic-webscraper</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>dynamic-webscraper</name>
     <description>dynamic-webscraper</description>
     <url/>
