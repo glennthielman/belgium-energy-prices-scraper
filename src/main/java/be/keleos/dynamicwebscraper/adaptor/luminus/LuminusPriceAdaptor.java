@@ -20,6 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static be.keleos.dynamicwebscraper.config.CachingConfiguration.LUMINUS_PRICES_CACHE_NAME;
+
 @Service
 @Slf4j
 public class LuminusPriceAdaptor {
@@ -32,7 +34,7 @@ public class LuminusPriceAdaptor {
     private static final int CURRENT_DAY_TABLE_INDEX = 1;
     private static final int DAY_AHEAD_TABLE_INDEX = 2;
 
-    @Cacheable("luminusPricesCache")
+    @Cacheable(LUMINUS_PRICES_CACHE_NAME)
     public PriceResource getPrices() {
         try {
             var doc = getDocument();
@@ -51,10 +53,10 @@ public class LuminusPriceAdaptor {
         return null;
     }
 
-    @CacheEvict(value = "luminusPricesCache", allEntries = true)
+    @CacheEvict(value = LUMINUS_PRICES_CACHE_NAME, allEntries = true)
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
     public void evictCache() {
-        log.debug("Evicting luminusPricesCache from web");
+        log.debug("Evicting {} from web", LUMINUS_PRICES_CACHE_NAME);
     }
 
     private Document getDocument() throws IOException {

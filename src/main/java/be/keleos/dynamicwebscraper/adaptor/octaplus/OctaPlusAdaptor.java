@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static be.keleos.dynamicwebscraper.config.CachingConfiguration.OCTAPLUS_PRICES_CACHE_NAME;
+
 @Service
 @Slf4j
 public class OctaPlusAdaptor {
@@ -30,7 +32,7 @@ public class OctaPlusAdaptor {
     private static final RestClient OctaPlusClient = RestClient.create();
     private static final HashMap<LocalDate, List<Price>> priceMapPerDate = new HashMap<>();
 
-    @Cacheable("OctaPlusPricesCache")
+    @Cacheable(OCTAPLUS_PRICES_CACHE_NAME)
     public PriceResource getPrices() {
         var outCotation = requestPrices();
         mapPricesAndSaveInMap(outCotation.getOutPriceResource());
@@ -40,10 +42,10 @@ public class OctaPlusAdaptor {
                 .setPricesDayAhead(priceMapPerDate.getOrDefault(LocalDate.now().plusDays(1), null));
     }
 
-    @CacheEvict(value = "OctaPlusPricesCache", allEntries = true)
+    @CacheEvict(value = OCTAPLUS_PRICES_CACHE_NAME, allEntries = true)
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
     public void evictCache() {
-        log.debug("Evicting OctaPlusPricesCache from web");
+        log.debug("Evicting {} from web", OCTAPLUS_PRICES_CACHE_NAME);
         removeOldDates();
     }
 

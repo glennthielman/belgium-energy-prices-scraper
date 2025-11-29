@@ -1,5 +1,6 @@
 package be.keleos.dynamicwebscraper.service;
 
+import be.keleos.dynamicwebscraper.adaptor.eneco.EnecoPriceAdaptor;
 import be.keleos.dynamicwebscraper.adaptor.luminus.LuminusPriceAdaptor;
 import be.keleos.dynamicwebscraper.adaptor.octaplus.OctaPlusAdaptor;
 import be.keleos.dynamicwebscraper.model.Calculations;
@@ -19,11 +20,13 @@ public class PriceService {
 
     private final LuminusPriceAdaptor luminusPriceAdaptor;
     private final OctaPlusAdaptor octaPlusAdaptor;
+    private final EnecoPriceAdaptor enecoPriceAdaptor;
 
     public PriceResource getPrices(PriceProvider provider) {
         return switch (provider) {
             case LUMINUS -> luminusPriceAdaptor.getPrices();
             case OCTA_PLUS -> octaPlusAdaptor.getPrices();
+            case ENECO -> enecoPriceAdaptor.getPrices();
         };
     }
 
