@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 
@@ -70,7 +71,7 @@ public class PriceService {
         var sum = prices.getPrices().stream()
                 .map(Price::getPriceKwH)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sum.divide(BigDecimal.valueOf(prices.getPrices().size()));
+        return sum.divide(BigDecimal.valueOf(prices.getPrices().size()), RoundingMode.HALF_UP);
     }
 
     public BigDecimal getAvaragePriceMwh(PriceProvider provider) {
@@ -78,6 +79,6 @@ public class PriceService {
         var sum = prices.getPrices().stream()
                 .map(Price::getPriceMwH)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sum.divide(BigDecimal.valueOf(prices.getPrices().size()));
+        return sum.divide(BigDecimal.valueOf(prices.getPrices().size()), RoundingMode.HALF_UP);
     }
 }
