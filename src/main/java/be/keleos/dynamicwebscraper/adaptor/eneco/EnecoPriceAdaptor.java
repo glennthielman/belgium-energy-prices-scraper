@@ -32,7 +32,7 @@ public class EnecoPriceAdaptor {
                 .toPrices();
 
         return new PriceResource()
-                .setPrices(outPrices.subList(0, 23))
+                .setPrices(outPrices.subList(0, 24))
                 .setPricesDayAhead(outPrices.size() > 24 ? outPrices.subList(24, outPrices.size()) : new ArrayList<>());
     }
 
