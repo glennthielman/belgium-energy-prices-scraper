@@ -1,8 +1,6 @@
 package be.keleos.dynamicwebscraper.service;
 
-import be.keleos.dynamicwebscraper.adaptor.eneco.EnecoPriceAdaptor;
-import be.keleos.dynamicwebscraper.adaptor.luminus.LuminusPriceAdaptor;
-import be.keleos.dynamicwebscraper.adaptor.octaplus.OctaPlusAdaptor;
+import be.keleos.dynamicwebscraper.adaptor.PriceAdapterService;
 import be.keleos.dynamicwebscraper.model.Calculations;
 import be.keleos.dynamicwebscraper.model.Highlight;
 import be.keleos.dynamicwebscraper.model.Price;
@@ -14,21 +12,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class PriceService {
 
-    private final LuminusPriceAdaptor luminusPriceAdaptor;
-    private final OctaPlusAdaptor octaPlusAdaptor;
-    private final EnecoPriceAdaptor enecoPriceAdaptor;
+    private final PriceAdapterService priceAdapterService;
 
     public PriceResource getPrices(PriceProvider provider) {
-        return switch (provider) {
-            case LUMINUS -> luminusPriceAdaptor.getPrices();
-            case OCTA_PLUS -> octaPlusAdaptor.getPrices();
-            case ENECO -> enecoPriceAdaptor.getPrices();
-        };
+        return priceAdapterService.getPrices(provider);
     }
 
     public Highlight getHighlight(PriceProvider provider, LocalDateTime dateTime) {
@@ -37,7 +30,6 @@ public class PriceService {
                 .setMinPrice(getMinPrice(provider))
                 .setMaxPrice(getMaxPrice(provider))
                 .setCalculations(getCalculations(provider));
-
     }
 
     public Calculations getCalculations(PriceProvider provider) {
@@ -48,10 +40,10 @@ public class PriceService {
 
     public Price getCurrentPrice(PriceProvider provider, LocalDateTime dateTime) {
         return dateTime == null ? null :
-                getPrices(provider).getPrices().stream()
-                .filter(price -> (dateTime.isAfter(price.getStartTime()) && dateTime.isBefore(price.getEndTime()) || dateTime.isEqual(price.getStartTime())))
-                .findFirst()
-                .orElse(null);
+                Stream.concat(getPrices(provider).getPrices().stream(), getPrices(provider).getPricesDayAhead().stream())
+                    .filter(price -> (dateTime.isAfter(price.getStartTime()) && dateTime.isBefore(price.getEndTime()) || dateTime.isEqual(price.getStartTime())))
+                    .findFirst()
+                    .orElse(null);
     }
 
     public Price getMinPrice(PriceProvider provider) {

@@ -1,13 +1,13 @@
 package be.keleos.dynamicwebscraper.adaptor.octaplus;
 
+import be.keleos.dynamicwebscraper.adaptor.AdapterTemplate;
 import be.keleos.dynamicwebscraper.adaptor.octaplus.model.OutCotation;
 import be.keleos.dynamicwebscraper.adaptor.octaplus.model.OutPrice;
 import be.keleos.dynamicwebscraper.adaptor.octaplus.model.OutPriceResource;
 import be.keleos.dynamicwebscraper.model.Price;
 import be.keleos.dynamicwebscraper.model.PriceResource;
+import be.keleos.dynamicwebscraper.service.PriceProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -22,33 +22,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static be.keleos.dynamicwebscraper.config.CachingConfiguration.OCTAPLUS_PRICES_CACHE_NAME;
+import static be.keleos.dynamicwebscraper.service.PriceProvider.OCTA_PLUS;
 
 @Service
 @Slf4j
-public class OctaPlusAdaptor {
+public class OctaPlusAdaptor extends AdapterTemplate {
 
     private static final String URL = "https://srv.octaplus.be/websiterest/GetTarDynCotations";
     private static final RestClient OctaPlusClient = RestClient.create();
     private static final HashMap<LocalDate, List<Price>> priceMapPerDate = new HashMap<>();
 
-    @Cacheable(OCTAPLUS_PRICES_CACHE_NAME)
-    public PriceResource getPrices() {
+    @Override
+    public PriceProvider getProvider() {
+        return OCTA_PLUS;
+    }
+
+    @Override
+    protected PriceResource findPricesFromProvider() {
         var outCotation = requestPrices();
         mapPricesAndSaveInMap(outCotation.getOutPriceResource());
 
         return new PriceResource()
                 .setPrices(priceMapPerDate.getOrDefault(LocalDate.now(), null))
                 .setPricesDayAhead(priceMapPerDate.getOrDefault(LocalDate.now().plusDays(1), null));
+
     }
 
-    @CacheEvict(value = OCTAPLUS_PRICES_CACHE_NAME, allEntries = true)
     @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
-    public void evictCache() {
-        log.debug("Evicting {} from web", OCTAPLUS_PRICES_CACHE_NAME);
-        removeOldDates();
-    }
-
     private void removeOldDates() {
         if(priceMapPerDate.size() > 2) {
             var minDate = Collections.min(priceMapPerDate.keySet());

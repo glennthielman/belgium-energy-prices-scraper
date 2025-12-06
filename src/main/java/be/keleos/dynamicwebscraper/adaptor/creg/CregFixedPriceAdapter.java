@@ -74,7 +74,7 @@ public class CregFixedPriceAdapter {
 
         return new FixedQuarterlyPrice()
                 .setQuarter(Integer.parseInt(quarter.substring(QUARTER_SUBSTRING_START, QUARTER_SUBSTRING_END)))
-                .setYear(Integer.parseInt(quarter.substring(YEAR_SUBSTRING_START,  YEAR_SUBSTRING_END)))
+                .setYear(Integer.parseInt(quarter.substring(YEAR_SUBSTRING_START, YEAR_SUBSTRING_END)))
                 .setPriceFlanders(new FixedPrice().setPrice(new BigDecimal(priceFlanders)))
                 .setPriceBrussels(new FixedPrice().setPrice(new BigDecimal(priceBrussels)))
                 .setPriceWallonia(new FixedPrice().setPrice(new BigDecimal(priceWallonia)));

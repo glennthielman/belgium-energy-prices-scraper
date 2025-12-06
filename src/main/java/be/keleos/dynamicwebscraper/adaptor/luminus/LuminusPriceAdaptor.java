@@ -1,14 +1,13 @@
 package be.keleos.dynamicwebscraper.adaptor.luminus;
 
+import be.keleos.dynamicwebscraper.adaptor.AdapterTemplate;
 import be.keleos.dynamicwebscraper.model.Price;
 import be.keleos.dynamicwebscraper.model.PriceResource;
+import be.keleos.dynamicwebscraper.service.PriceProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,13 +17,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static be.keleos.dynamicwebscraper.config.CachingConfiguration.LUMINUS_PRICES_CACHE_NAME;
+import static be.keleos.dynamicwebscraper.service.PriceProvider.LUMINUS;
 
 @Service
 @Slf4j
-public class LuminusPriceAdaptor {
+public class LuminusPriceAdaptor extends AdapterTemplate {
 
     private static final String URL = "https://my.luminusbusiness.be/market-info/nl/dynamic-prices/";
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
@@ -34,8 +32,13 @@ public class LuminusPriceAdaptor {
     private static final int CURRENT_DAY_TABLE_INDEX = 1;
     private static final int DAY_AHEAD_TABLE_INDEX = 2;
 
-    @Cacheable(LUMINUS_PRICES_CACHE_NAME)
-    public PriceResource getPrices() {
+    @Override
+    public PriceProvider getProvider() {
+        return LUMINUS;
+    }
+
+    @Override
+    protected PriceResource findPricesFromProvider() {
         try {
             var doc = getDocument();
             var date = getDate(doc, false);
@@ -51,12 +54,6 @@ public class LuminusPriceAdaptor {
             log.error("Cannot get LuminusPrices from web", e);
         }
         return null;
-    }
-
-    @CacheEvict(value = LUMINUS_PRICES_CACHE_NAME, allEntries = true)
-    @Scheduled(fixedRate = 30, timeUnit = TimeUnit.MINUTES)
-    public void evictCache() {
-        log.debug("Evicting {} from web", LUMINUS_PRICES_CACHE_NAME);
     }
 
     private Document getDocument() throws IOException {
@@ -100,5 +97,4 @@ public class LuminusPriceAdaptor {
                 .setEndTime(startDateTime.plusHours(1))
                 .setPrice(new BigDecimal(price));
     }
-
 }
