@@ -35,9 +35,10 @@
 ## About The Project
 
 This project will get the hourly energy prices in Belgium of the current day and day a head (after 14:00), based of the following data providers:
-* [Luminus](https://my.luminusbusiness.be/market-info/nl/dynamic-prices/).  
+* [Luminus](https://my.luminusbusiness.be/market-info/nl/dynamic-prices/)
 * [OCTA+](https://www.octaplus.be/dynamisch-stroomtarief-uurprijzen)
 * [Eneco](https://eneco.be/nl/actuele-prijzen/)
+* [Creg](https://www.creg.be/nl/consumenten/prijzen-en-tarieven/creg-tarief-voor-terugbetaling-thuisladen-bedrijfswagens)
 
 The goal is to scrape one of these data endpoints into structured json format that is workable for home automation systems like HomeAssistant.
 
@@ -108,6 +109,61 @@ Will give a short summary of the day. In order to get the current price, you wil
 }
 ```
 
+* **creg/prices**
+Will give the fixed price for the know quarters, handy for people that get reimbursed for charging company car at home.
+Elements in the json:
+  * price: contains the price determined directly from CREG incl VAT, Infrastructure cost, Capacity Tax,...
+  * nakedPrice: price - 0,17 euro, added cost above the electricity price is around 0.17 euro
+  * fiftyFifty: when you divide the prices in half saying half is the electricity price the other half added taxes and infrastructure cost
+```json
+{
+  "prices": [
+    {
+
+      "year": 2026,
+      "quarter": 1,
+      "priceBrussels": {
+        "price": 0.3426,
+        "nakedPrice": 0.1726,
+        "fiftyFifty": 0.1713
+      },
+      "priceFlanders": {
+        "price": 0.3132,
+        "nakedPrice": 0.1432,
+        "fiftyFifty": 0.1566
+      },
+      "priceWallonia": {
+        "price": 0.3523,
+        "nakedPrice": 0.1823,
+        "fiftyFifty": 0.1762
+    },
+      ....
+}
+```
+
+* **creg/prices/current**
+Will give the fixed price for the current quarter.
+```json
+{
+  "year": 2025,
+  "quarter": 4,
+  "priceBrussels": {
+    "price": 0.3426,
+    "nakedPrice": 0.1726,
+    "fiftyFifty": 0.1713
+  },
+  "priceFlanders": {
+    "price": 0.3132,
+    "nakedPrice": 0.1432,
+    "fiftyFifty": 0.1566
+  },
+  "priceWallonia": {
+    "price": 0.3523,
+    "nakedPrice": 0.1823,
+    "fiftyFifty": 0.1762
+  }
+}
+```
 <!-- GETTING STARTED -->
 ## Getting Started
 
@@ -150,6 +206,21 @@ rest:
         json_attributes:
           - prices
           - pricesDayAhead
+  - resource: <<<<<<URL>>>>>/creg/prices/current
+    scan_interval: 600
+    sensor:
+      - name: Creg naked price
+        unique_id: creg_naked_price
+        unit_of_measurement: "EUR/kWh"
+        value_template: "{{ value_json.price<<<<Flanders|Brussels|Wallonia>>>>.nakedPrice }}"
+      - name: Creg fiftyfifty price
+        unique_id: creg_fiftyfifty_price
+        unit_of_measurement: "EUR/kWh"
+        value_template: "{{ value_json.price<<<<Flanders|Brussels|Wallonia>>>>.fiftyFifty }}"
+      - name: Creg current price
+        unique_id: creg_current_price
+        unit_of_measurement: "EUR/kWh"
+        value_template: "{{ value_json.price<<<<Flanders|Brussels|Wallonia>>>>.price }}"
   - resource: <<<<<<URL>>>>>/highlights
       params:
         datetime: "{{now().strftime('%Y-%m-%dT%H:%M')}}"
@@ -157,11 +228,11 @@ rest:
       sensor:
         - name: DyEn current price
           unique_id: dyen_current_price
-          unit_of_measurement: "EUR"
+          unit_of_measurement: "EUR/kWh"
           value_template: "{{ value_json.currentPrice.priceKwH }}"
         - name: DyEn lowest price
           unique_id: dyen_lowest_price
-          unit_of_measurement: "EUR"
+          unit_of_measurement: "EUR/kWh"
           value_template: "{{ value_json.minPrice.priceKwH }}"
         - name: DyEn lowest start time
           unique_id: dyen_lowest_start_time
@@ -173,7 +244,7 @@ rest:
           value_template: "{{ as_local(strptime(value_json.minPrice.endTime, '%Y-%m-%dT%H:%M:%S')) }}"
         - name: DyEn highest price
           unique_id: dyen_highest_price
-          unit_of_measurement: "EUR"
+          unit_of_measurement: "EUR/kWh"
           value_template: "{{ value_json.maxPrice.priceKwH }}"
         - name: DyEn highest start time
           unique_id: dyen_highest_start_time
@@ -185,7 +256,7 @@ rest:
           value_template: "{{ as_local(strptime(value_json.maxPrice.endTime, '%Y-%m-%dT%H:%M:%S')) }}"
         - name: DyEn average price
           unique_id: dyen_average_price
-          unit_of_measurement: "EUR"
+          unit_of_measurement: "EUR/kWh"
           value_template: "{{ value_json.calculations.averagePriceKwH }}"
 ```
 
@@ -205,6 +276,10 @@ entities:
     name: Highest start time
   - entity: sensor.dyen_average_price
     name: Average price
+  - entity: sensor.creg_current_price
+  - entity: sensor.creg_naked_price
+  - entity: sensor.creg_fiftyfifty_price
+    name: Creg 50/50 price
 title: Dynamic Electicity Prices
 ```
 
@@ -398,8 +473,10 @@ apex_config:
 - [x] Luminus integration
 - [x] Octa+ integration
 - [x] Eneco integration
+- [x] investigate patterns to streamline integrations
+- [ ] Entsoe platform [link](https://transparency.entsoe.eu/)
+- [ ] Elia [link](https://www.elia.be/en/grid-data/transmission/day-ahead-reference-price) 
 - [ ] Clean up code
-- [ ] investigate patterns to streamline integrations
 
 <!-- LICENSE -->
 ## License
