@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Get Prices",
+    "method": "GET",
+    "path": "/prices",
+    "description": "Returns all the quarterly prices know from the CREG.",
+    "params": [],
+    "response": [
+      {
+        "prices": [
+          {
+            "priceBrussels": {
+              "fiftyFifty": 0.1713,
+              "nakedPrice": 0.1726,
+              "price": 0.3426
+            },
+            "priceFlanders": {
+              "fiftyFifty": 0.1566,
+              "nakedPrice": 0.1432,
+              "price": 0.3132
+            },
+            "priceWallonia": {
+              "fiftyFifty": 0.1762,
+              "nakedPrice": 0.1823,
+              "price": 0.3523
+            },
+            "quarter": 1,
+            "year": 2026
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Get the current price",
+    "method": "GET",
+    "path": "/prices/current",
+    "description": "Returns the current price for the quarter.",
+    "params": [],
+    "response": [
+      {
+        "priceBrussels": {
+          "fiftyFifty": 0.1713,
+          "nakedPrice": 0.1726,
+          "price": 0.3426
+        },
+        "priceFlanders": {
+          "fiftyFifty": 0.1566,
+          "nakedPrice": 0.1432,
+          "price": 0.3132
+        },
+        "priceWallonia": {
+          "fiftyFifty": 0.1762,
+          "nakedPrice": 0.1823,
+          "price": 0.3523
+        },
+        "quarter": 1,
+        "year": 2026
+      }
+    ]
+  }
+]

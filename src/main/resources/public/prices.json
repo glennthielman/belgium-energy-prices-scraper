@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Get Prices",
+    "method": "GET",
+    "path": "/prices",
+    "description": "Returns a list of prices from a provider both of the same day as the day ahead.",
+    "params": [],
+    "response": [
+      {
+        "prices": [
+          {
+            "endTime": "2026-01-11T01:00:00",
+            "priceKwH": 0.0969,
+            "priceMwH": 96.9,
+            "startTime": "2026-01-11T00:00:00"
+          }
+        ]
+      },
+      {
+        "pricesDayAhead": [
+          {
+            "endTime": "2026-01-12T01:00:00",
+            "priceKwH": 0.07642,
+            "priceMwH": 76.42,
+            "startTime": "2026-01-12T00:00:00"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Get day highlights",
+    "method": "GET",
+    "path": "/highlights",
+    "description": "Gets the highlights of the provided day, if no date is provided then the current day is displayed and you don't get the current time",
+    "params": [
+      {
+        "name": "datetime",
+        "type": "dateTime",
+        "description": "The datetime formatted as yyyy-MM-ddThh:mm example: 2026-01-11T11:38"
+      }
+    ],
+    "response":
+      {"calculations":{"averagePriceKwH":0.09329,"averagePriceMwH":93.29},"currentPrice":{"endTime":"2026-01-11T12:00:00","priceKwH":0.09543,"priceMwH":95.43,"startTime":"2026-01-11T11:00:00"},"maxPrice":{"endTime":"2026-01-11T19:00:00","priceKwH":0.11082,"priceMwH":110.82,"startTime":"2026-01-11T18:00:00"},"minPrice":{"endTime":"2026-01-12T00:00:00","priceKwH":0.08147,"priceMwH":81.47,"startTime":"2026-01-11T23:00:00"}}
+  }
+]
