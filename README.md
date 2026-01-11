@@ -42,128 +42,6 @@ This project will get the hourly energy prices in Belgium of the current day and
 
 The goal is to scrape one of these data endpoints into structured json format that is workable for home automation systems like HomeAssistant.
 
-### Available endpoints
-
-first you will need to select a data provider using the following luminus, octaplus, eneco.
-you will need to replace that in url, for example of you want the eneco prices its "eneco/prices"
-
-* **<< dataprovider >>/prices**  
-Will give an hourly list of all prices, example:
-```json
-"prices": [
-    {
-      "startTime": "2025-11-22T00:00:00",
-      "endTime": "2025-11-22T01:00:00",
-      "priceKwH": 0.09951,
-      "priceMwH": 99.51
-    },
-    {
-      "startTime": "2025-11-22T01:00:00",
-      "endTime": "2025-11-22T02:00:00",
-      "priceKwH": 0.09432,
-      "priceMwH": 94.32
-    }, ....
-]
-"pricesDayAhead": [
-    {
-        "startTime": "2025-11-23T00:00:00",
-        "endTime": "2025-11-23T01:00:00",
-        "priceKwH": 0.08153,
-        "priceMwH": 81.53
-    },
-    {
-        "startTime": "2025-11-23T01:00:00",
-        "endTime": "2025-11-23T02:00:00",
-        "priceKwH": 0.07435,
-        "priceMwH": 74.35
-    }, ....
-]
-```
-
-* **<< dataprovider >>/highlights?datetime=<< Current timestamp >>**  
-Will give a short summary of the day. In order to get the current price, you will need to provide a timestamp for example: /highlights?datetime=2025-11-22T08:39
-```json
-{
-  "calculations": {
-    "averagePriceKwH": 0.09138125,
-    "averagePriceMwH": 91.38125
-  },
-  "currentPrice": {
-    "startTime": "2025-11-22T08:00:00",
-    "endTime": "2025-11-22T09:00:00",
-    "priceKwH": 0.10419,
-    "priceMwH": 104.19
-  },
-  "maxPrice": {
-    "startTime": "2025-11-22T07:00:00",
-    "endTime": "2025-11-22T08:00:00",
-    "priceKwH": 0.11021,
-    "priceMwH": 110.21
-  },
-  "minPrice": {
-    "startTime": "2025-11-22T13:00:00",
-    "endTime": "2025-11-22T14:00:00",
-    "priceKwH": 0.07686,
-    "priceMwH": 76.86
-  }
-}
-```
-
-* **creg/prices**
-Will give the fixed price for the know quarters, handy for people that get reimbursed for charging company car at home.
-Elements in the json:
-  * price: contains the price determined directly from CREG incl VAT, Infrastructure cost, Capacity Tax,...
-  * nakedPrice: price - 0,17 euro, added cost above the electricity price is around 0.17 euro
-  * fiftyFifty: when you divide the prices in half saying half is the electricity price the other half added taxes and infrastructure cost
-```json
-{
-  "prices": [
-    {
-
-      "year": 2026,
-      "quarter": 1,
-      "priceBrussels": {
-        "price": 0.3426,
-        "nakedPrice": 0.1726,
-        "fiftyFifty": 0.1713
-      },
-      "priceFlanders": {
-        "price": 0.3132,
-        "nakedPrice": 0.1432,
-        "fiftyFifty": 0.1566
-      },
-      "priceWallonia": {
-        "price": 0.3523,
-        "nakedPrice": 0.1823,
-        "fiftyFifty": 0.1762
-    },
-      ....
-}
-```
-
-* **creg/prices/current**
-Will give the fixed price for the current quarter.
-```json
-{
-  "year": 2025,
-  "quarter": 4,
-  "priceBrussels": {
-    "price": 0.3426,
-    "nakedPrice": 0.1726,
-    "fiftyFifty": 0.1713
-  },
-  "priceFlanders": {
-    "price": 0.3132,
-    "nakedPrice": 0.1432,
-    "fiftyFifty": 0.1566
-  },
-  "priceWallonia": {
-    "price": 0.3523,
-    "nakedPrice": 0.1823,
-    "fiftyFifty": 0.1762
-  }
-}
-```
 <!-- GETTING STARTED -->
 ## Getting Started
 
@@ -188,6 +66,10 @@ The container does caching for fetching the data of the providers, this is to no
    ```sh
    docker-compose up -d
    ```
+
+### Available endpoints
+
+You can find the API documentation at the index page, when the container is running.
 
 <!-- HomeAssistant setup -->
 ## HomeAssistant
@@ -474,6 +356,7 @@ apex_config:
 - [x] Octa+ integration
 - [x] Eneco integration
 - [x] investigate patterns to streamline integrations
+- [x] Added API documentation as index
 - [ ] Entsoe platform [link](https://transparency.entsoe.eu/)
 - [ ] Elia [link](https://www.elia.be/en/grid-data/transmission/day-ahead-reference-price) 
 - [ ] Clean up code
