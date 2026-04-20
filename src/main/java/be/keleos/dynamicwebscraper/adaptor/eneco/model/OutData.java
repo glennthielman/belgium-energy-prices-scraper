@@ -18,6 +18,7 @@ public class OutData {
     public List<Price> toPrices() {
         return records
                 .stream()
+                .distinct()
                 .map(OutPriceRecord::toPrice)
                 .toList();
     }

@@ -2,6 +2,7 @@ package be.keleos.dynamicwebscraper.adaptor.eneco;
 
 import be.keleos.dynamicwebscraper.adaptor.AdapterTemplate;
 import be.keleos.dynamicwebscraper.adaptor.eneco.model.OutEnecoPrices;
+import be.keleos.dynamicwebscraper.model.Price;
 import be.keleos.dynamicwebscraper.model.PriceResource;
 import be.keleos.dynamicwebscraper.service.PriceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import static be.keleos.dynamicwebscraper.service.PriceProvider.ENECO;
