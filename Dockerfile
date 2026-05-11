@@ -1,3 +1,3 @@
-FROM eclipse-temurin:21-ubi9-minimal
+FROM gcr.io/distroless/java21-debian12
 COPY dynamic-webscraper*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
