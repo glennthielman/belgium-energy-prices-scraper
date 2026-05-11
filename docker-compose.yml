@@ -1,6 +1,6 @@
 version: "2.1"
 services:
-  deluge:
+  dynamic-prices:
     image: dynamic-prices:latest
     container_name: dynamic-prices
     ports:
