@@ -4,7 +4,13 @@
     "method": "GET",
     "path": "/prices",
     "description": "Returns a list of prices from a provider both of the same day as the day ahead.",
-    "params": [],
+    "params": [
+      {
+        "name": "timeInterval",
+        "type": "timeInterval",
+        "description": "The time interval {hourly, quarterly}, default is hourly"
+      }
+    ],
     "response": [
       {
         "prices": [
@@ -38,6 +44,11 @@
         "name": "datetime",
         "type": "dateTime",
         "description": "The datetime formatted as yyyy-MM-ddThh:mm example: 2026-01-11T11:38"
+      },
+      {
+        "name": "timeInterval",
+        "type": "timeInterval",
+        "description": "The time interval {hourly, quarterly}, default is hourly"
       }
     ],
     "response":
