@@ -39,6 +39,7 @@ This project will get the hourly energy prices in Belgium of the current day and
 * [OCTA+](https://www.octaplus.be/dynamisch-stroomtarief-uurprijzen)
 * [Eneco](https://eneco.be/nl/actuele-prijzen/)
 * [Creg](https://www.creg.be/nl/consumenten/prijzen-en-tarieven/creg-tarief-voor-terugbetaling-thuisladen-bedrijfswagens)
+* [Elia](https://www.elia.be/en/grid-data/transmission/day-ahead-reference-price)
 
 The goal is to scrape one of these data endpoints into structured json format that is workable for home automation systems like HomeAssistant.
 
@@ -358,7 +359,7 @@ apex_config:
 - [x] investigate patterns to streamline integrations
 - [x] Added API documentation as index
 - [ ] Entsoe platform [link](https://transparency.entsoe.eu/)
-- [X] Elia [link](https://www.elia.be/en/grid-data/transmission/day-ahead-reference-price) 
+- [X] Elia
 - [ ] Clean up code
 
 <!-- LICENSE -->
