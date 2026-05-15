@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -23,21 +24,32 @@ public class PriceService {
 
     private final PriceAdapterService priceAdapterService;
 
-    public PriceResource getPrices(PriceProvider provider) {
-        return priceAdapterService.getPrices(provider);
+    public PriceResource getPrices() {
+        for (PriceProvider provider : PriceProvider.getProviderInOrder()) {
+            try {
+                return getPrices(provider);
+            } catch (Exception ex) {
+                log.error("Could not fetch price data from {} will try another", provider.getProviderName(), ex);
+            }
+        }
+        log.error("Could not fetch price data from any provider");
+        return null;
     }
 
-    public PriceResource getPrices(PriceProvider provider, PriceProvider fallbackProvider) {
-        try {
-            return getPrices(provider);
-        } catch (Exception ex) {
-            log.error("Could not fetch price data from {}", provider.getProviderName(), ex);
+    public Highlight getHighlight(LocalDateTime dateTime) {
+        for (PriceProvider provider : PriceProvider.getProviderInOrder()) {
+            try {
+                return getHighlight(provider, dateTime);
+            } catch (Exception ex) {
+                log.error("Could not fetch highlight data from {}", provider.getProviderName(), ex);
+            }
         }
-
-        if(fallbackProvider != null) {
-            return getPrices(fallbackProvider);
-        }
+        log.error("Could not fetch highlight data from any provider");
         return null;
+    }
+
+    public PriceResource getPrices(PriceProvider provider) {
+        return priceAdapterService.getPrices(provider);
     }
 
     public Highlight getHighlight(PriceProvider provider, LocalDateTime dateTime) {
@@ -46,18 +58,6 @@ public class PriceService {
                 .setMinPrice(getMinPrice(provider))
                 .setMaxPrice(getMaxPrice(provider))
                 .setCalculations(getCalculations(provider));
-    }
-
-    public Highlight getHighlight(PriceProvider provider, PriceProvider fallbackProvider, LocalDateTime dateTime) {
-        try {
-            return getHighlight(provider, dateTime);
-        } catch (Exception ex) {
-            log.error("Could not fetch highlight data from {}", provider.getProviderName(), ex);
-        }
-        if(fallbackProvider != null) {
-            return getHighlight(fallbackProvider, dateTime);
-        }
-        return null;
     }
 
     public Calculations getCalculations(PriceProvider provider) {

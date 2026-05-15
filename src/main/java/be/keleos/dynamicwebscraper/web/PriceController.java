@@ -19,33 +19,14 @@ public class PriceController {
 
     private final PriceService priceService;
 
-    @GetMapping("{provider}/prices")
-    public PriceResource dynamicPrices(@PathVariable String provider,
-                                       @RequestParam(required = false) String fallbackProvider) {
-        var fallbackPriceProvider =
-                fallbackProvider == null ? null:
-                PriceProvider.getProvider(fallbackProvider);
-
-        return priceService.getPrices(
-                PriceProvider.getProvider(provider),
-                fallbackPriceProvider
-        );
+    @GetMapping("/prices")
+    public PriceResource getPrices() {
+        return priceService.getPrices();
     }
 
-    @GetMapping("{provider}/highlights")
-    public Highlight dynamicHighlights(
-            @PathVariable String provider,
-            @RequestParam(required = false) String fallbackProvider,
-            @RequestParam(value = "datetime", required = false) LocalDateTime time) {
-
-        var fallbackPriceProvider =
-                fallbackProvider == null ? null:
-                PriceProvider.getProvider(fallbackProvider);
-
-        return priceService.getHighlight(
-                PriceProvider.getProvider(provider),
-                fallbackPriceProvider,
-                time
-        );
+    @GetMapping("/highlights")
+    public Highlight getHighlights(
+            @RequestParam(value = "datetime", required = false) LocalDateTime start) {
+        return priceService.getHighlight(start);
     }
 }
