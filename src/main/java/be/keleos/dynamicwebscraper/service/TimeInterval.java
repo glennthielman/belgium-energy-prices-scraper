@@ -18,6 +18,6 @@ public enum TimeInterval {
         return Arrays.stream(TimeInterval.values())
                 .filter(timeInterval -> timeInterval.getName().equalsIgnoreCase(name))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new IllegalArgumentException("No timeInterval with name " + name));
     }
 }
