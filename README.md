@@ -358,7 +358,7 @@ apex_config:
 - [x] investigate patterns to streamline integrations
 - [x] Added API documentation as index
 - [ ] Entsoe platform [link](https://transparency.entsoe.eu/)
-- [ ] Elia [link](https://www.elia.be/en/grid-data/transmission/day-ahead-reference-price) 
+- [X] Elia [link](https://www.elia.be/en/grid-data/transmission/day-ahead-reference-price) 
 - [ ] Clean up code
 
 <!-- LICENSE -->

@@ -24,8 +24,9 @@ public class PriceService {
 
     private final PriceAdapterService priceAdapterService;
 
-    public PriceResource getPrices() {
-        for (PriceProvider provider : PriceProvider.getProviderInOrder()) {
+    public PriceResource getPrices(String timeInterval) {
+        var providers = PriceProvider.getProviderInOrder(TimeInterval.getTimeInterval(timeInterval));
+        for (PriceProvider provider : providers) {
             try {
                 return getPrices(provider);
             } catch (Exception ex) {
@@ -36,8 +37,9 @@ public class PriceService {
         return null;
     }
 
-    public Highlight getHighlight(LocalDateTime dateTime) {
-        for (PriceProvider provider : PriceProvider.getProviderInOrder()) {
+    public Highlight getHighlight(String timeInterval, LocalDateTime dateTime) {
+        var providers = PriceProvider.getProviderInOrder(TimeInterval.getTimeInterval(timeInterval));
+        for (PriceProvider provider : providers) {
             try {
                 return getHighlight(provider, dateTime);
             } catch (Exception ex) {
