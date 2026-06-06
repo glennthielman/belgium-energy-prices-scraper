@@ -1,0 +1,62 @@
+rest:
+  - resource: <<<<<<URL>>>>>/prices
+    scan_interval: 60
+    sensor:
+      - name: DyEn prices
+        unique_id: dyen_prices_overview
+        value_template: 'OK'
+        json_attributes:
+          - prices
+          - pricesDayAhead
+  - resource: <<<<<<URL>>>>>/creg/prices/current
+    scan_interval: 600
+    sensor:
+      - name: Creg naked price
+        unique_id: creg_naked_price
+        unit_of_measurement: "EUR/kWh"
+        value_template: "{{ value_json.price<<<<Flanders|Brussels|Wallonia>>>>.nakedPrice }}"
+      - name: Creg fiftyfifty price
+        unique_id: creg_fiftyfifty_price
+        unit_of_measurement: "EUR/kWh"
+        value_template: "{{ value_json.price<<<<Flanders|Brussels|Wallonia>>>>.fiftyFifty }}"
+      - name: Creg current price
+        unique_id: creg_current_price
+        unit_of_measurement: "EUR/kWh"
+        value_template: "{{ value_json.price<<<<Flanders|Brussels|Wallonia>>>>.price }}"
+  - resource: <<<<<<URL>>>>>/highlights
+      params:
+        datetime: "{{now().strftime('%Y-%m-%dT%H:%M')}}"
+      scan_interval: 60
+      sensor:
+        - name: DyEn current price
+          unique_id: dyen_current_price
+          unit_of_measurement: "EUR/kWh"
+          value_template: "{{ value_json.currentPrice.priceKwH }}"
+        - name: DyEn lowest price
+          unique_id: dyen_lowest_price
+          unit_of_measurement: "EUR/kWh"
+          value_template: "{{ value_json.minPrice.priceKwH }}"
+        - name: DyEn lowest start time
+          unique_id: dyen_lowest_start_time
+          device_class: "Timestamp"
+          value_template: "{{ as_local(strptime(value_json.minPrice.startTime, '%Y-%m-%dT%H:%M:%S')) }}"
+        - name: DyEn lowest end time
+          unique_id: dyen_lowest_end_time
+          device_class: "Timestamp"
+          value_template: "{{ as_local(strptime(value_json.minPrice.endTime, '%Y-%m-%dT%H:%M:%S')) }}"
+        - name: DyEn highest price
+          unique_id: dyen_highest_price
+          unit_of_measurement: "EUR/kWh"
+          value_template: "{{ value_json.maxPrice.priceKwH }}"
+        - name: DyEn highest start time
+          unique_id: dyen_highest_start_time
+          device_class: "Timestamp"
+          value_template: "{{ as_local(strptime(value_json.maxPrice.startTime, '%Y-%m-%dT%H:%M:%S')) }}"
+        - name: DyEn highest end time
+          unique_id: dyen_highest_end_time
+          device_class: "Timestamp"
+          value_template: "{{ as_local(strptime(value_json.maxPrice.endTime, '%Y-%m-%dT%H:%M:%S')) }}"
+        - name: DyEn average price
+          unique_id: dyen_average_price
+          unit_of_measurement: "EUR/kWh"
+          value_template: "{{ value_json.calculations.averagePriceKwH }}"

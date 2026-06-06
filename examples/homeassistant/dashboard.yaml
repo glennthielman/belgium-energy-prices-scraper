@@ -1,0 +1,19 @@
+type: entities
+entities:
+  - entity: sensor.dyen_current_price
+    name: Current price
+  - entity: sensor.dyen_lowest_price
+    name: Lowest price
+  - entity: sensor.dyen_lowest_start_time
+    name: Lowest start time
+  - entity: sensor.dyen_highest_price
+    name: Highest price
+  - entity: sensor.dyen_highest_start_time
+    name: Highest start time
+  - entity: sensor.dyen_average_price
+    name: Average price
+  - entity: sensor.creg_current_price
+  - entity: sensor.creg_naked_price
+  - entity: sensor.creg_fiftyfifty_price
+    name: Creg 50/50 price
+title: Dynamic Electicity Prices

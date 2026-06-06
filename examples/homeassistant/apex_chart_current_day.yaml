@@ -1,0 +1,87 @@
+type: custom:apexcharts-card
+graph_span: 24h
+experimental:
+  color_threshold: true
+header:
+  title: Energy Price (Today)
+  show: true
+  show_states: true
+span:
+  start: day
+now:
+  show: true
+  label: now
+  color: darkblue
+series:
+  - entity: sensor.dyen_prices
+    type: column
+    extend_to: end
+    unit: €/kWh
+    float_precision: 3
+    yaxis_id: Price
+    show:
+      in_header: before_now
+      extremas: true
+      header_color_threshold: true
+    color_threshold:
+      - value: 2
+        color: 00ed01
+      - value: 4
+        color: 3af901
+      - value: 6
+        color: 87fa00
+      - value: 8
+        color: cefb02
+      - value: 10
+        color: eeff00
+      - value: 12
+        color: ffde1a
+      - value: 14
+        color: ffa700
+      - value: 16
+        color: ff8d00
+      - value: 18
+        color: ff7400
+      - value: 20
+        color: ff4d00
+      - value: 22
+        color: ff4d00
+      - value: 24
+        color: ff0000
+      - value: 26
+        color: e60000
+      - value: 28
+        color: cc0000
+      - value: 30
+        color: b30000
+      - value: 32
+        color: "990000"
+      - value: 34
+        color: "800000"
+      - value: 36
+        color: "660000"
+      - value: 38
+        color: 4d0000
+      - value: 40
+        color: "330000"
+    data_generator: |
+      return entity.attributes.prices.map((entry) => {
+        return [new Date(entry.startTime), entry.priceKwH*100];
+      });
+    group_by:
+      func: avg
+      duration: 1h
+yaxis:
+  - id: Price
+    decimals: 0
+    apex_config:
+      title:
+        text: ¢/kWh
+      tickAmount: 5
+apex_config:
+  legend:
+    show: false
+  tooltip:
+    x:
+      show: true
+      format: HH:00 - HH:59
